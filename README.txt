@@ -1,3 +1,5 @@
+# Homework 2: Clustering
+
 [![Build
 Status](https://travis-ci.org/graciegordon/BMI203-Homework2.svg?branch=master)](https://travis-ci.org/graciegordon/BMI203-Homework2)
 
