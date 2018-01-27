@@ -1,5 +1,5 @@
 [![Build
-Status](https://travis-ci.org/graciegordon/BMI203-Homework2/functions.svg?branch=master)](https://travis-ci.org/graciegordon/BMI203-Homework2/functions)
+Status](https://travis-ci.org/graciegordon/BMI203-Homework2.svg?branch=master)](https://travis-ci.org/graciegordon/BMI203-Homework2)
 
 Skeleton for clustering project.
 
