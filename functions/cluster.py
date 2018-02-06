@@ -93,7 +93,7 @@ def cluster_by_partitioning(active_sites):
                             if test <= minimum:
                                 minimum=test
                                 idxtemp[j]=i
-       
+        '''   
         #test if clustering is the same, if it is return 
         if idxtemp == Cidx:
             C=[]
@@ -105,7 +105,8 @@ def cluster_by_partitioning(active_sites):
             break
         elif idxtemp != Cidx:
             Cidx=idxtemp
-        
+        '''
+
         #recalculate centers for each cluster
         for j in range(0,len(centroid)):
             nums=idxtemp.count(j)
@@ -122,9 +123,21 @@ def cluster_by_partitioning(active_sites):
             avg=np.mean(vect)
             centroid[j]=float(avg)
         
-        print('idx',idxtemp)
-        print('idx',sorted(idxtemp))
-        return sorted(idxtemp)
+        #test if clustering is the same, if it is return 
+        if idxtemp == Cidx:
+            C=[]
+            for item in idxtemp:
+                C.append(centroid[item])
+            print('c', C)
+            print('idx',idxtemp)
+            return sorted(idxtemp)
+            break
+        elif idxtemp != Cidx:
+            Cidx=idxtemp
+
+    print('idx',idxtemp)
+    print('idx',sorted(idxtemp))
+    return sorted(idxtemp)
     
 
 def cluster_hierarchically(active_sites):
