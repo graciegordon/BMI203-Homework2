@@ -90,10 +90,9 @@ def cluster_by_partitioning(active_sites):
                     if centroid[i]==(compute_hydrophobicity_Index(item)):
                             tempActive=item
                             test=compute_similarity(site, tempActive)
-                #test=compute_similarity(site, tempActive)
-                if test <= minimum:
-                    minimum=test
-                    idxtemp[j]=i
+                            if test <= minimum:
+                                minimum=test
+                                idxtemp[j]=i
        
         #test if clustering is the same, if it is return 
         if idxtemp == Cidx:
