@@ -17,11 +17,17 @@ class Residue:
     """
     A simple class for an amino acid residue
     """
-
     def __init__(self, type, number):
         self.type = type
         self.number = number
         self.atoms = []
+
+    """
+    def __init__(self, type, number):
+        self.type = type
+        self.number = number
+        self.atoms = []
+    """
 
     # Overload the __repr__ operator to make printing simpler.
     def __repr__(self):

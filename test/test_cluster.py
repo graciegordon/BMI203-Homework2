@@ -6,11 +6,12 @@ def test_similarity():
     filename_a = os.path.join("data", "276.pdb")
     filename_b = os.path.join("data", "4629.pdb")
 
+    #I've written the similarity function to accept floats to make the rest of my code flow easier
     activesite_a = io.read_active_site(filename_a)
     activesite_b = io.read_active_site(filename_b)
 
     # update this assertion
-    assert cluster.compute_similarity(activesite_a, activesite_b) == 0.0
+    assert round(cluster.compute_similarity(activesite_a, activesite_b),2) == float(7.51)
 
 def test_partition_clustering():
     # tractable subset
@@ -20,9 +21,10 @@ def test_partition_clustering():
     for id in pdb_ids:
         filepath = os.path.join("data", "%i.pdb"%id)
         active_sites.append(io.read_active_site(filepath))
-
+    correct=sorted([0, 1, 1])
+    correct2=sorted([0, 0, 1])
     # update this assertion
-    assert cluster.cluster_by_partitioning(active_sites) == []
+    assert (cluster.cluster_by_partitioning(active_sites) == correct) or (cluster.cluster_by_partitioning(active_sites) == correct2)
 
 def test_hierarchical_clustering():
     # tractable subset

@@ -57,6 +57,7 @@ def read_active_site(filepath):
                 # make a new residue if needed
                 if residue_number != r_num:
                     residue = Residue(residue_type, residue_number)
+                    #residue = Residue(residue_type)
                     r_num = residue_number
 
                 # add the atom to the residue
