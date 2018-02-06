@@ -47,7 +47,7 @@ def cluster_by_partitioning(active_sites):
     """
     
     #Use K-means Partitioning Algorithm
-    #set number of clusters
+    #set number of clusters must be less than number of clusters
     numClusters=2
     numSites=0
     for x in active_sites:
@@ -57,8 +57,6 @@ def cluster_by_partitioning(active_sites):
     features=[]
     for z in active_sites:
         features.append(compute_hydrophobicity_Index(z))
-
-    print('make feat',features)
 
     #initialize centroids
     centroid=[]
@@ -71,47 +69,32 @@ def cluster_by_partitioning(active_sites):
         while pos in centroid:
             pos=np.random.choice(features, 1)
             print('pos',pos)
-        
-        #pos=pos.tolist()
-        
         pos=float(str(pos[0]))
-        print('pos after',pos)
-        #print('assign cluster')
-        #print(pos)
         centroid.append(pos)
-    print('centroid',centroid)
     Cidx=[]
-    print('sites', active_sites)
     
     #define number of iterations
     for iteration in range(0,1):
-
         #assign clusters
         #list of indicies of closest cluster for each active site
         idxtemp=[0]*numSites
         
         #for each active site, assign it a cluster based on distance
         for j in range(0,len(idxtemp)):
-            print('test access',active_sites[j].residues)
             minimum=float("inf")
             #site=features[j]
             site=active_sites[j]
-            print('len',len(centroid))
             for i in range(0,len(centroid)):
-                #this is a stupid work around do better
+                #this is a stupid work around do better to get back to active sites
                 for item in active_sites:
                     if centroid[i]==(compute_hydrophobicity_Index(item)):
                             tempActive=item
                 test=compute_similarity(site, tempActive)
-                print('test',test)
                 if test <= minimum:
                     minimum=test
                     idxtemp[j]=i
-        
-        print('temp ind',idxtemp)
-        print("ctemp",Cidx)
-        #if iteration==0:
-         #   Cidx=idxtemp
+       
+        #test if clustering is the same, if it is return 
         if idxtemp == Cidx:
             C=[]
             for item in idxtemp:
@@ -123,30 +106,22 @@ def cluster_by_partitioning(active_sites):
         elif idxtemp != Cidx:
             Cidx=idxtemp
         
-        #print('c',C)
         #recalculate centers for each cluster
         for j in range(0,len(centroid)):
             nums=idxtemp.count(j)
-            print('num', nums)
             vect=[0]*nums
-            print('vect',vect)
             counter=0
-            print('len',len(Cidx))
+            #collect all clusters of the same and get the average point
             for i in range(0,len(Cidx)):
                 print(Cidx[i],j)
                 if (Cidx[i]==j):
                     vect[counter]=float(features[i])
-                    print('feat',features[i])
-                    print(vect)
                     counter+=1
-            print('vect2',vect)
             if vect==[]:
                 vect.append(0)
             avg=np.mean(vect)
             centroid[j]=float(avg)
-            print(avg)
-        print('recalc',centroid)
-        #print('c', C)
+        
         print('idx',idxtemp)
         print('idx',sorted(idxtemp))
         return sorted(idxtemp)
