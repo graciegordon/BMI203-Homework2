@@ -89,7 +89,8 @@ def cluster_by_partitioning(active_sites):
                 for item in active_sites:
                     if centroid[i]==(compute_hydrophobicity_Index(item)):
                             tempActive=item
-                test=compute_similarity(site, tempActive)
+                            test=compute_similarity(site, tempActive)
+                #test=compute_similarity(site, tempActive)
                 if test <= minimum:
                     minimum=test
                     idxtemp[j]=i
@@ -125,18 +126,6 @@ def cluster_by_partitioning(active_sites):
         print('idx',idxtemp)
         print('idx',sorted(idxtemp))
         return sorted(idxtemp)
-        """
-        iter=0
-        for m in centroid:
-            #count number of samples in each cluster
-            counts=0
-            clust=[]
-            for item in active_sites:
-                if item == m:
-                    counts+=1
-                    clust.append(item)
-            centroid[iter]=(1/counts)*sum(clust)
-        """ 
     
 
 def cluster_hierarchically(active_sites):
