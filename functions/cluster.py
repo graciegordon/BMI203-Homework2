@@ -147,22 +147,65 @@ def cluster_hierarchically(active_sites):
     Output: a list of clusterings
             (each clustering is a list of lists of Sequence objects)
     """
-
+    print('aggs')
     #implement Agglomerative Algorithm
     listoflists=[]
-    '''
+    #determine how many clusters to stop at
+    numberclust=1
+    print('active site', active_sites) 
     #put each object in its own cluster
     for site in active_sites:
-        a_list.append(site)
-        listoflists.append(a_list)
+        print(site)
+        print(site.residues)
         a_list=[]
-    
+        a_list.append(site)
+        print(a_list)
+        listoflists.append(a_list)
+        #a_list=[]
+    print('listsolists',listoflists)
     #iterate through list compare distance and merge cells with closest distance
-    for item in listoflists:
-        #compare first item to all others merge shortest distance
+    
+    smallest=float('inf')
+    while len(listoflists)!=numberclust:
+        avgfirst=0
+        #what about when first is not only one element
+        firstlist=listoflists[0]
+        '''
+        for start in listoflists[0]:
+            #first=listoflists[0][0]
+            #print(first)
+            firsthydro=compute_hydrophobicity_Index(start)
+            avgfirst+=firsthydro
+        avgfirst=avgfirst/len(listoflists[0])
+        '''
+        countind=0
+        for item in listoflists[1:]:
+            #compare first item to all others merge shortest distance
+            #we actually want to compare every cluster to every other
+            countind+=1
+            
+            for site in item:
+                print('site',site)
+                #comphydro=compute_hydrophobicity_Index(site)
+                for element in firstlist:
+                    dist=compute_similarity(element,site)
+                    print('hydro',element,site,dist)
+                    if dist<smallest:
+                        smallest=dist
+                        closest=site
+                        idx=countind 
+        #idx=listoflists.index([site])
+        #print('idx',idx)
+        print('best')
+        print(closest,smallest,idx)
+        
+        #mergecells 
+        #newclust=listoflists[0]+listoflists[idx]
+        newclust=listoflists[0]+listoflists[idx]
+        listoflists.pop(0)
+        listoflists.pop(idx-1)
+        listoflists.append(newclust)
 
-    #inplement Nearest Neighbor approach
-    '''
+        print('merged',listoflists)
 
-
-    return []
+    return listoflists

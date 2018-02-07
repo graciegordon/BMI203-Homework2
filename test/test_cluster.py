@@ -29,7 +29,9 @@ def test_partition_clustering():
 
 def test_hierarchical_clustering():
     # tractable subset
-    pdb_ids = [276, 4629, 10701]
+    #pdb_ids = [276, 4629, 10701,34047,29047]
+    #pdb_ids=[276, 4629, 10701]
+    pdb_ids=[10701,276,4629]
 
     active_sites = []
     for id in pdb_ids:
