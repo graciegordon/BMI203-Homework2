@@ -57,10 +57,13 @@ def cluster_by_partitioning(active_sites):
     features=[]
     for z in active_sites:
         features.append(compute_hydrophobicity_Index(z))
-
+    print(features)
     #initialize centroids
     centroid=[]
     
+    centroid=np.random.choice(features,numClusters,replace=False)
+    
+    '''
     for i in range(numClusters):
         #tempCentroid=random.choice(active_sites)
         #print('pos before',pos)
@@ -71,16 +74,57 @@ def cluster_by_partitioning(active_sites):
             print('pos',pos)
         pos=float(str(pos[0]))
         centroid.append(pos)
+    '''
     Cidx=[]
-    
+    print('centroid',centroid) 
     #define number of iterations
     for iteration in range(0,1):
         #assign clusters
         #list of indicies of closest cluster for each active site
         idxtemp=[0]*numSites
         
+        #for cent in centroid:
+        for num in range(len(idxtemp)):
+            mindist=float('inf')
+            for cent in centroid:
+                dist=math.sqrt((cent-features[num])**2)
+                if dist<mindist:
+                    mindist=dist
+                    idxtemp[num]=cent
+        print('idx',idxtemp)
+        
+        tempclust=[]
+        centid=0
+        for item in centroid:
+            #get number of items assigned to each cluster and make vector
+            nums=idxtemp.count(item)
+            avgvect=[0]*nums
+            clustvect=[0]*nums
+            count=0
+            i=0
+            #collect all values for the cluster
+            for j in (idxtemp):
+                print('comp',j,item)
+                if j == item:
+                    #get feature position
+                    avgvect[count]=features[i]
+                    print('avg',avgvect)
+                    clustvect[count]=active_sites[i]
+                    print('clust',clustvect)
+                    count+=1
+                i+=1
+            print('vect',avgvect)
+            newcent=np.mean(avgvect)
+            print("new",newcent)
+            centroid[centid]=newcent
+            print("new cent vect",centroid)
+            centid+=1
+            #create list of list for current clusters
+            tempclust.append(clustvect)
+        print(tempclust)
+        '''
         #for each active site, assign it a cluster based on distance
-        for j in range(0,len(idxtemp)):
+        for j in range(0,numSites):
             minimum=float("inf")
             #site=features[j]
             site=active_sites[j]
@@ -93,20 +137,7 @@ def cluster_by_partitioning(active_sites):
                             if test <= minimum:
                                 minimum=test
                                 idxtemp[j]=i
-        '''   
-        #test if clustering is the same, if it is return 
-        if idxtemp == Cidx:
-            C=[]
-            for item in idxtemp:
-                C.append(centroid[item])
-            print('c', C)
-            print('idx',idxtemp)
-            return sorted(idxtemp)
-            break
-        elif idxtemp != Cidx:
-            Cidx=idxtemp
-        '''
-
+        
         #recalculate centers for each cluster
         for j in range(0,len(centroid)):
             nums=idxtemp.count(j)
@@ -114,7 +145,7 @@ def cluster_by_partitioning(active_sites):
             counter=0
             #collect all clusters of the same and get the average point
             for i in range(0,len(Cidx)):
-                print(Cidx[i],j)
+                print('get average',Cidx[i],j)
                 if (Cidx[i]==j):
                     vect[counter]=float(features[i])
                     counter+=1
@@ -130,14 +161,48 @@ def cluster_by_partitioning(active_sites):
                 C.append(centroid[item])
             print('c', C)
             print('idx',idxtemp)
-            return sorted(idxtemp)
+            sublist1=[]
+            sublist2=[]
+            for num in range(len(active_sites)):
+                if idxtemp[num]==1:
+                    sublist1.append(active_sites[num])
+                if idxtemp[num]==0:
+                    sublist2.append(active_sites[num])
+            final=[]
+            final.append(sublist1)
+            final.append(sublist2)
+            print(final)
+            return final
             break
         elif idxtemp != Cidx:
             Cidx=idxtemp
-
+    '''
+        if tempclust == Cidx:
+            clustfinal=tempclust
+            print('final found',clustfinal)
+            return clustfinal
+        else:
+            Cidx=tempclust
+    
+    '''
+    sublist1=[]
+    sublist2=[]
+    for num in range(len(active_sites)):
+        if idxtemp[num]==1:
+            sublist1.append(active_sites[num])
+        if idxtemp[num]==0:
+            sublist2.append(active_sites[num])
+    print(sublist1,sublist2)
+    final=[]
+    final.append(sublist1)
+    final.append(sublist2)
     print('idx',idxtemp)
     print('idx',sorted(idxtemp))
-    return sorted(idxtemp)
+    '''
+    #max iter reached
+    clustfinal=tempclust
+    print('final reached',clustfinal)
+    return clustfinal
     
     
 def cluster_hierarchically(active_sites):
