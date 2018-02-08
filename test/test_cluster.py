@@ -50,3 +50,18 @@ def test_hierarchical_clustering():
     print(test,correct)
     assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
 
+def test_clust_quality():
+    pdb_ids=[276, 4629, 10701]
+    #pdb_ids = [276, 4629, 10701,34047,29047]
+    
+    active_sites = []
+    for id in pdb_ids:
+        filepath = os.path.join("data", "%i.pdb"%id)
+        active_sites.append(io.read_active_site(filepath))
+    clust=[[active_sites[0], active_sites[1]], [active_sites[2]]]
+    #clust=[[active_sites[2],active_sites[4]],[active_sites[0],active_sites[1],active_sites[3]]]
+    test=(cluster.check_clust_quality(clust))
+    assert round(test,2) == float(1.88)
+
+
+

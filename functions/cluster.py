@@ -222,3 +222,30 @@ def cluster_hierarchically(active_sites):
         print(listoflists) 
     print('final',listoflists)
     return listoflists
+
+def check_clust_quality(clusterlist):
+    print(clusterlist)
+    totclust=0
+    for clust in clusterlist:
+        clustdist=0
+        for i in range(len(clust)):
+            for j in range(i+1,len(clust)):            
+                disttemp=compute_similarity(clust[i],clust[j])
+                print('sim',disttemp)
+                clustdist+=disttemp
+                print('clust dist',clustdist)
+        clustdist=clustdist/len(clust)
+        print(clustdist)
+        totclust+=clustdist 
+    
+    print('all clust',totclust)
+    final=totclust/len(clusterlist)
+    print(final)
+    return final
+
+
+    print(clusterlist)
+    return clusterlist
+
+
+

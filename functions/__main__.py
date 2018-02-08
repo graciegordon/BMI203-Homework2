@@ -11,15 +11,16 @@ if len(sys.argv) < 4:
     print("Usage: python -m hw2skeleton [-P| -H] <pdb directory> <output file>")
     sys.exit(0)
 
-active_sites = read_active_sites(sys.argv[2])
+active_sites = io.read_active_sites(sys.argv[2])
 
 # Choose clustering algorithm
 if sys.argv[1][0:2] == '-P':
     print("Clustering using Partitioning method")
-    clustering = cluster_by_partitioning(active_sites)
-    write_clustering(sys.argv[3], clustering)
+    clustering = cluster.cluster_by_partitioning(active_sites)
+    io.write_clustering(sys.argv[3], clustering)
 
 if sys.argv[1][0:2] == '-H':
     print("Clustering using hierarchical method")
-    clusterings = cluster_hierarchically(active_sites)
-    write_mult_clusterings(sys.argv[3], clusterings)
+    clusterings = cluster.cluster_hierarchically(active_sites)
+    io.write_clustering(sys.argv[3], clusterings)
+    #io.write_mult_clusterings(sys.argv[3], clusterings)
