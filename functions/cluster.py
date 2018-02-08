@@ -139,7 +139,7 @@ def cluster_by_partitioning(active_sites):
     print('idx',sorted(idxtemp))
     return sorted(idxtemp)
     
-
+    
 def cluster_hierarchically(active_sites):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
@@ -151,7 +151,7 @@ def cluster_hierarchically(active_sites):
     #implement Agglomerative Algorithm
     listoflists=[]
     #determine how many clusters to stop at
-    numberclust=1
+    numberclust=2
     print('active site', active_sites) 
     #put each object in its own cluster
     for site in active_sites:
@@ -164,48 +164,49 @@ def cluster_hierarchically(active_sites):
         #a_list=[]
     print('listsolists',listoflists)
     #iterate through list compare distance and merge cells with closest distance
-    
-    smallest=float('inf')
+    #do until number of clusters desired is reached
+    #for i in range(4):
     while len(listoflists)!=numberclust:
-        avgfirst=0
-        #what about when first is not only one element
-        firstlist=listoflists[0]
-        '''
-        for start in listoflists[0]:
-            #first=listoflists[0][0]
-            #print(first)
-            firsthydro=compute_hydrophobicity_Index(start)
-            avgfirst+=firsthydro
-        avgfirst=avgfirst/len(listoflists[0])
-        '''
-        countind=0
-        for item in listoflists[1:]:
-            #compare first item to all others merge shortest distance
-            #we actually want to compare every cluster to every other
-            countind+=1
-            
-            for site in item:
-                print('site',site)
-                #comphydro=compute_hydrophobicity_Index(site)
-                for element in firstlist:
-                    dist=compute_similarity(element,site)
-                    print('hydro',element,site,dist)
-                    if dist<smallest:
-                        smallest=dist
-                        closest=site
-                        idx=countind 
-        #idx=listoflists.index([site])
-        #print('idx',idx)
-        print('best')
-        print(closest,smallest,idx)
-        
-        #mergecells 
-        #newclust=listoflists[0]+listoflists[idx]
-        newclust=listoflists[0]+listoflists[idx]
-        listoflists.pop(0)
-        listoflists.pop(idx-1)
-        listoflists.append(newclust)
-
-        print('merged',listoflists)
-
+        #find minimum distance between the clusters
+        #get first to compare
+        bestclusterstomerge=float("inf")
+        for clust in listoflists:
+            #get second cluster to compare
+            for compare in listoflists:
+                #lowestdistforKNN=float("inf")
+                if compare != clust:
+                    #compare each element in list to find the minimum distance between the cluster (KNN)
+                    lowestdistforKNN=float("inf")
+                    for i in clust:
+                        for j in compare:
+                            disttemp=compute_similarity(i,j)
+                            #save lowest distance found between two clusters
+                            if disttemp<lowestdistforKNN:
+                                lowestdistforKNN=disttemp
+                    #save lowest distance for these clusters
+                    lowestdistfortwoclusters=lowestdistforKNN
+                    print('low cluster',lowestdistfortwoclusters)
+                    print('last best',bestclusterstomerge)
+                    #if this is the lowest distance found so far, save this info
+                    if lowestdistfortwoclusters<bestclusterstomerge:
+                        bestclusterstomerge=lowestdistfortwoclusters
+                        clusterA=clust
+                        clusterB=compare
+                    print('best this clust so far',lowestdistfortwoclusters)
+                    print('best of all', bestclusterstomerge,clusterA,clusterB)
+        #merge two closest clusters
+        print('to merge',clusterA,clusterB,bestclusterstomerge)
+        idxlist=[]
+        idxlist.append(listoflists.index(clusterA))
+        idxlist.append(listoflists.index(clusterB))
+        idxlist=sorted(idxlist)
+    
+        mergeitems=listoflists[idxlist[0]]+listoflists[idxlist[1]]
+        print(mergeitems)
+        listoflists.remove(listoflists[idxlist[0]])
+        idxlist[1]=idxlist[1]-1
+        listoflists.remove(listoflists[idxlist[1]])
+        listoflists=listoflists+[mergeitems]
+        print(listoflists) 
+    print('final',listoflists)
     return listoflists
