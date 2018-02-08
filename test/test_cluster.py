@@ -77,5 +77,4 @@ def test_compare_clusters():
     clustA=cluster.cluster_hierarchically(active_sites)
     clustB=cluster.cluster_by_partitioning(active_sites)
     comp=cluster.compare_clusters(clustA,clustB,active_sites)
-    comp = 1
-    assert comp == []
+    assert comp == 1
