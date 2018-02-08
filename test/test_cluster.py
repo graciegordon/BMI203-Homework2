@@ -31,6 +31,7 @@ def test_partition_clustering():
     correct2=[[active_sites[2]], [active_sites[0], active_sites[1]]]
     # update this assertion
     assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
+    #assert test == []
 
 def test_hierarchical_clustering():
     # tractable subset
@@ -49,6 +50,7 @@ def test_hierarchical_clustering():
     # update this assertion
     print(test,correct)
     assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
+    #assert test == []
 
 def test_clust_quality():
     pdb_ids=[276, 4629, 10701]
@@ -63,5 +65,17 @@ def test_clust_quality():
     test=(cluster.check_clust_quality(clust))
     assert round(test,2) == float(1.88)
 
-
-
+def test_compare_clusters():
+    #write test for comparison
+    pdb_ids=[276, 4629, 10701]
+    #pdb_ids = [276, 4629, 10701,34047,29047]
+    active_sites = []
+    for id in pdb_ids:
+        filepath = os.path.join("data", "%i.pdb"%id)
+        active_sites.append(io.read_active_site(filepath))
+    
+    clustA=cluster.cluster_hierarchically(active_sites)
+    clustB=cluster.cluster_by_partitioning(active_sites)
+    comp=cluster.compare_clusters(clustA,clustB,active_sites)
+    comp = 1
+    assert comp == []

@@ -4,7 +4,6 @@ from functions import utils
 import math
 import numpy as np
 import random
-
 def compute_hydrophobicity_Index(site):
     #calculate Hydrophobicity Index for aa. Source: sigma-aldrich
     hydrophobicityIndexNeutral={'PHE':100,'ILE':99,'TRP':97,'LEU':97,'VAL':76, 'MET':74,'TYR':63,'CYS':49,'ALA':41,'THR':13,'HIS':8,'GLY':0,'SER':-5,'GLN':-10,'ARG':-14, 'LYS':-23,'ASN':-28,'GLU':-31,'PRO':-46,'ASP':-55}
@@ -104,7 +103,7 @@ def cluster_by_partitioning(active_sites):
             i=0
             #collect all values for the cluster
             for j in (idxtemp):
-                print('comp',j,item)
+                #print('comp',j,item)
                 if j == item:
                     #append distance to recalculate centroid
                     #append active site numbers to show these clusters
@@ -112,11 +111,11 @@ def cluster_by_partitioning(active_sites):
                     clustvect[count]=active_sites[i]
                     count+=1
                 i+=1
-            print('vect',avgvect)
+            #print('vect',avgvect)
             newcent=np.mean(avgvect)
-            print("new",newcent)
+            #print("new",newcent)
             centroid[centid]=newcent
-            print("new cent vect",centroid)
+            #print("new cent vect",centroid)
             centid+=1
             #create list of list for current clusters
             tempclust.append(clustvect)
@@ -194,17 +193,17 @@ def cluster_hierarchically(active_sites):
                                 lowestdistforKNN=disttemp
                     #save lowest distance for these clusters
                     lowestdistfortwoclusters=lowestdistforKNN
-                    print('low cluster',lowestdistfortwoclusters)
-                    print('last best',bestclusterstomerge)
+                    #print('low cluster',lowestdistfortwoclusters)
+                    #print('last best',bestclusterstomerge)
                     #if this is the lowest distance found so far, save this info
                     if lowestdistfortwoclusters<bestclusterstomerge:
                         bestclusterstomerge=lowestdistfortwoclusters
                         clusterA=clust
                         clusterB=compare
-                    print('best this clust so far',lowestdistfortwoclusters)
-                    print('best of all', bestclusterstomerge,clusterA,clusterB)
+                    #print('best this clust so far',lowestdistfortwoclusters)
+                    #print('best of all', bestclusterstomerge,clusterA,clusterB)
         #merge two closest clusters
-        print('to merge',clusterA,clusterB,bestclusterstomerge)
+        #print('to merge',clusterA,clusterB,bestclusterstomerge)
         #determine the indicies to merge
         idxlist=[]
         idxlist.append(listoflists.index(clusterA))
@@ -214,7 +213,7 @@ def cluster_hierarchically(active_sites):
         #merge the indicies given
         #for ind in idxlist:
         mergeitems=listoflists[idxlist[0]]+listoflists[idxlist[1]]
-        print(mergeitems)
+        #print(mergeitems)
         listoflists.remove(listoflists[idxlist[0]])
         idxlist[1]=idxlist[1]-1
         listoflists.remove(listoflists[idxlist[1]])
@@ -243,9 +242,80 @@ def check_clust_quality(clusterlist):
     print(final)
     return final
 
+def convert_sites_to_clust_idx(clust,active_sites):
+    #convert sites to 1/2 to assign clusters
+    idx=[]
+    for num in active_sites:
+        if num in clust[0]:
+            idx.append(1)
+        if num in clust[1]:
+            idx.append(2)
 
-    print(clusterlist)
-    return clusterlist
+    print('indexing',idx)
+    return idx
 
+def guarentee_site_order(cluster):
+    pair={}
+    originalidx=0
+    for item in cluster:
+        tot=0
+        for element in item:
+            num=compute_hydrophobicity_Index(element)
+            tot+=num
+        tot=tot/len(item)
+        pair[tot]=originalidx
+        originalidx+=1
 
+    clustnew=[]
+    for key in sorted(pair):
+        temp=pair[key]
+        clustnew.append(cluster[temp])
+    
+    return clustnew
 
+def compare_clusters(clusterA,clusterB,active_sites):
+    #clusterA will be lower hydrophobicity and B will be higher 
+    print(clusterA)
+    print(clusterB)
+   
+    #sort sites so clusters are ordered by average hydorphobicity
+    clusterA=guarentee_site_order(clusterA)
+    clusterB=guarentee_site_order(clusterB)
+
+    print('clustA',clusterA)
+    print('clustB',clusterB)
+    
+    #input two lists of lists with clusters and return cluster assignments
+    CidxA=convert_sites_to_clust_idx(clusterA,active_sites)
+    CidxB=convert_sites_to_clust_idx(clusterB,active_sites)
+    print('clusta',CidxA)
+    print('clustb',CidxB)
+
+    #Compare each cluster to determine False/True Negatives/Positives
+    #for i,j in zip(CidxA,CidxB):
+    #    print(i,j)
+    
+    ##Implement Rand Index to compare two clusters
+    TP=0
+    TN=0
+    FP=0
+    FN=0
+    for i in range(len(CidxA)):
+        for j in range(i+1,len(CidxA)):
+            ##True postive
+            if (CidxA[i]==CidxA[j]) and (CidxB[i]==CidxB[j]):
+                TP+=1
+            ##False negative
+            if (CidxA[i]!=CidxA[j]) and (CidxB[i]==CidxB[j]):
+                FN+=1
+            ##False positive
+            if (CidxA[i]==CidxA[j]) and (CidxB[i]!=CidxB[j]):
+                FP+=1
+            ##True negative
+            if (CidxA[i]!=CidxA[j]) and (CidxB[i]!=CidxB[j]):
+                TN+=1
+
+    RandIdx=(TP+TN)/(TP+FP+TN+FN)
+
+    print("RI",RandIdx)
+    return RandIdx
