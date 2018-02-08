@@ -17,16 +17,20 @@ def test_similarity():
 def test_partition_clustering():
     # tractable subset
     pdb_ids = [276, 4629, 10701]
-
+    #pdb_ids=[10701,276,4629]
+    #pdb_ids = [276, 4629, 10701,34047,29047] 
+    
     active_sites = []
     for id in pdb_ids:
         filepath = os.path.join("data", "%i.pdb"%id)
         active_sites.append(io.read_active_site(filepath))
     test=cluster.cluster_by_partitioning(active_sites)
-    correct=[[276, 4629], [10701]]
-    correct2=[[10701], [276, 4629]]
+    #correct=np.array([[276, 4629], [10701]])
+    #correct2=np.array([[10701], [276, 4629]])
+    correct=[[active_sites[0], active_sites[1]], [active_sites[2]]]
+    correct2=[[active_sites[2]], [active_sites[0], active_sites[1]]]
     # update this assertion
-    assert ((test == correct) or (test == correct2))
+    assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
 
 def test_hierarchical_clustering():
     # tractable subset
@@ -39,9 +43,10 @@ def test_hierarchical_clustering():
         filepath = os.path.join("data", "%i.pdb"%id)
         active_sites.append(io.read_active_site(filepath))
     #print(cluster.cluster_hierarchically(active_sites))
-    correct=([[10701], [276, 4629]])
+    correct=[[active_sites[0], active_sites[1]], [active_sites[2]]]
+    correct2=[[active_sites[2]], [active_sites[0], active_sites[1]]]
     test=(cluster.cluster_hierarchically(active_sites))
     # update this assertion
     print(test,correct)
-    assert 1==1
+    assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
 
