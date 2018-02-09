@@ -22,7 +22,7 @@ The main file that you will need to modify is `cluster.py` and the corresponding
 ├── README.md
 ├── data
 │   ...
-├── hw2skeleton
+├── functions
 │   ├── __init__.py
 │   ├── __main__.py
 │   ├── cluster.py
@@ -42,12 +42,16 @@ conda install --yes --file requirements.txt
 ```
 
 to install all the dependencies in `requirements.txt`. Then the package's
-main function (located in `hw2skeleton/__main__.py`) can be run as
+main function (located in `functions/__main__.py`) can be run as
 follows
 
 ```
-python -m hw2skeleton -P data test.txt
+python -m functions -P data test.txt
 ```
+The -P flag is for the partition method, the -H flag is for heirarchical,
+and the -A flag runs both methods, then compares the two clusters using the
+Rand Index and measures the Quality of the clusters using the Sum of Distances
+Method
 
 ## testing
 
