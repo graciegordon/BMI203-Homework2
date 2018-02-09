@@ -48,7 +48,7 @@ def test_hierarchical_clustering():
     correct2=[[active_sites[2]], [active_sites[0], active_sites[1]]]
     test=(cluster.cluster_hierarchically(active_sites))
     # update this assertion
-    print(test,correct)
+    #print(test,correct)
     assert ((np.array_equal(test,correct)) or (np.array_equal(test,correct2)))
     #assert test == []
 

@@ -8,6 +8,7 @@ def compute_hydrophobicity_Index(site):
     #calculate Hydrophobicity Index for aa. Source: sigma-aldrich
     hydrophobicityIndexNeutral={'PHE':100,'ILE':99,'TRP':97,'LEU':97,'VAL':76, 'MET':74,'TYR':63,'CYS':49,'ALA':41,'THR':13,'HIS':8,'GLY':0,'SER':-5,'GLN':-10,'ARG':-14, 'LYS':-23,'ASN':-28,'GLU':-31,'PRO':-46,'ASP':-55}
     
+    #for each residue in the active site, sum hydrophobicity score and average
     H_index=0
     numRes=0
     for res in site.residues:
@@ -57,7 +58,6 @@ def cluster_by_partitioning(active_sites):
     features=[]
     for z in active_sites:
         features.append(compute_hydrophobicity_Index(z))
-    print(features)
    
     Cidx=[]
     #initialize centroids
@@ -74,7 +74,7 @@ def cluster_by_partitioning(active_sites):
         #assign clusters
         ################
         
-        print('centroid',centroid)
+        #print('centroid',centroid)
 
         #list of centroids of closest cluster for each active site (matched index for feature,active and idx)
         idxtemp=[0]*numSites
@@ -86,7 +86,7 @@ def cluster_by_partitioning(active_sites):
                 if dist<mindist:
                     mindist=dist
                     idxtemp[num]=cent
-        print('idx',idxtemp)
+        #print('idx',idxtemp)
         
         ###################################################################
         #average elements assigned to each vector and recalculate centroids
@@ -119,7 +119,7 @@ def cluster_by_partitioning(active_sites):
             centid+=1
             #create list of list for current clusters
             tempclust.append(clustvect)
-        print(tempclust)
+        #print(tempclust)
 
         #####################################################
         #determine if clusters stayed the same this iteration
@@ -128,7 +128,7 @@ def cluster_by_partitioning(active_sites):
 
         if tempclust == Cidx:
             clustfinal=tempclust
-            print('final found',clustfinal)
+            #print('final found',clustfinal)
             return clustfinal
         else:
             Cidx=tempclust
@@ -146,7 +146,6 @@ def cluster_hierarchically(active_sites):
     Output: a list of clusterings
             (each clustering is a list of lists of Sequence objects)
     """
-    print('aggs')
     
     ##################################
     #implement Agglomerative Algorithm
@@ -155,18 +154,14 @@ def cluster_hierarchically(active_sites):
     listoflists=[]
     #determine how many clusters to stop at
     numberclust=2
-    print('active site', active_sites) 
     
     #put each object in its own cluster
     for site in active_sites:
-        print(site)
-        print(site.residues)
         a_list=[]
         a_list.append(site)
-        print(a_list)
         listoflists.append(a_list)
         #a_list=[]
-    print('listsolists',listoflists)
+    #print('listsolists',listoflists)
    
     ############################################################################
     #iterate through list compare distance by nearest neighbor metric
@@ -218,28 +213,27 @@ def cluster_hierarchically(active_sites):
         idxlist[1]=idxlist[1]-1
         listoflists.remove(listoflists[idxlist[1]])
         listoflists=listoflists+[mergeitems]
-        print(listoflists) 
     print('final',listoflists)
     return listoflists
 
 def check_clust_quality(clusterlist):
-    print(clusterlist)
+    #print(clusterlist)
     totclust=0
     for clust in clusterlist:
         clustdist=0
         for i in range(len(clust)):
             for j in range(i+1,len(clust)):            
                 disttemp=compute_similarity(clust[i],clust[j])
-                print('sim',disttemp)
+                #print('sim',disttemp)
                 clustdist+=disttemp
-                print('clust dist',clustdist)
+                #print('clust dist',clustdist)
         clustdist=clustdist/len(clust)
-        print(clustdist)
+        #print(clustdist)
         totclust+=clustdist 
     
-    print('all clust',totclust)
+    #print('all clust',totclust)
     final=totclust/len(clusterlist)
-    print(final)
+    #print('final',final)
     return final
 
 def convert_sites_to_clust_idx(clust,active_sites):
@@ -251,7 +245,6 @@ def convert_sites_to_clust_idx(clust,active_sites):
         if num in clust[1]:
             idx.append(2)
 
-    print('indexing',idx)
     return idx
 
 def guarentee_site_order(cluster):
@@ -275,21 +268,16 @@ def guarentee_site_order(cluster):
 
 def compare_clusters(clusterA,clusterB,active_sites):
     #clusterA will be lower hydrophobicity and B will be higher 
-    print(clusterA)
-    print(clusterB)
    
     #sort sites so clusters are ordered by average hydorphobicity
     clusterA=guarentee_site_order(clusterA)
     clusterB=guarentee_site_order(clusterB)
 
-    print('clustA',clusterA)
-    print('clustB',clusterB)
-    
     #input two lists of lists with clusters and return cluster assignments
     CidxA=convert_sites_to_clust_idx(clusterA,active_sites)
     CidxB=convert_sites_to_clust_idx(clusterB,active_sites)
-    print('clusta',CidxA)
-    print('clustb',CidxB)
+    #print('clusta',CidxA)
+    #print('clustb',CidxB)
 
     #Compare each cluster to determine False/True Negatives/Positives
     #for i,j in zip(CidxA,CidxB):
