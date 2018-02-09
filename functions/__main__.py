@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 #def plotting_func(clusterA,clusterB):
 def plot_clustser(clust,title):
 
-    col=['red','blue']
+    col=['red','blue','black']
     iter=0
     for i in clust:
         temp=[]
-        print(i)
+        #print(i)
         for x in i:
             hydro=cluster.compute_hydrophobicity_Index(x)
             temp.append(hydro)

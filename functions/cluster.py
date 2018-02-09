@@ -74,8 +74,6 @@ def cluster_by_partitioning(active_sites):
         #assign clusters
         ################
         
-        #print('centroid',centroid)
-
         #list of centroids of closest cluster for each active site (matched index for feature,active and idx)
         idxtemp=[0]*numSites
         for num in range(len(idxtemp)):
@@ -86,7 +84,6 @@ def cluster_by_partitioning(active_sites):
                 if dist<mindist:
                     mindist=dist
                     idxtemp[num]=cent
-        #print('idx',idxtemp)
         
         ###################################################################
         #average elements assigned to each vector and recalculate centroids
@@ -103,7 +100,6 @@ def cluster_by_partitioning(active_sites):
             i=0
             #collect all values for the cluster
             for j in (idxtemp):
-                #print('comp',j,item)
                 if j == item:
                     #append distance to recalculate centroid
                     #append active site numbers to show these clusters
@@ -111,15 +107,12 @@ def cluster_by_partitioning(active_sites):
                     clustvect[count]=active_sites[i]
                     count+=1
                 i+=1
-            #print('vect',avgvect)
+            #calculate new centroid location
             newcent=np.mean(avgvect)
-            #print("new",newcent)
             centroid[centid]=newcent
-            #print("new cent vect",centroid)
             centid+=1
             #create list of list for current clusters
             tempclust.append(clustvect)
-        #print(tempclust)
 
         #####################################################
         #determine if clusters stayed the same this iteration
@@ -160,8 +153,6 @@ def cluster_hierarchically(active_sites):
         a_list=[]
         a_list.append(site)
         listoflists.append(a_list)
-        #a_list=[]
-    #print('listsolists',listoflists)
    
     ############################################################################
     #iterate through list compare distance by nearest neighbor metric
@@ -188,17 +179,12 @@ def cluster_hierarchically(active_sites):
                                 lowestdistforKNN=disttemp
                     #save lowest distance for these clusters
                     lowestdistfortwoclusters=lowestdistforKNN
-                    #print('low cluster',lowestdistfortwoclusters)
-                    #print('last best',bestclusterstomerge)
                     #if this is the lowest distance found so far, save this info
                     if lowestdistfortwoclusters<bestclusterstomerge:
                         bestclusterstomerge=lowestdistfortwoclusters
                         clusterA=clust
                         clusterB=compare
-                    #print('best this clust so far',lowestdistfortwoclusters)
-                    #print('best of all', bestclusterstomerge,clusterA,clusterB)
         #merge two closest clusters
-        #print('to merge',clusterA,clusterB,bestclusterstomerge)
         #determine the indicies to merge
         idxlist=[]
         idxlist.append(listoflists.index(clusterA))
@@ -208,48 +194,45 @@ def cluster_hierarchically(active_sites):
         #merge the indicies given
         #for ind in idxlist:
         mergeitems=listoflists[idxlist[0]]+listoflists[idxlist[1]]
-        #print(mergeitems)
         listoflists.remove(listoflists[idxlist[0]])
         idxlist[1]=idxlist[1]-1
         listoflists.remove(listoflists[idxlist[1]])
         listoflists=listoflists+[mergeitems]
-    print('final',listoflists)
+    #print('final',listoflists)
     return listoflists
 
 def check_clust_quality(clusterlist):
-    #print(clusterlist)
+    #Use Sum of Distances Method to check cluster
     totclust=0
     for clust in clusterlist:
         clustdist=0
+        #sum and normalize the distances between elements in the cluster
         for i in range(len(clust)):
             for j in range(i+1,len(clust)):            
                 disttemp=compute_similarity(clust[i],clust[j])
-                #print('sim',disttemp)
                 clustdist+=disttemp
-                #print('clust dist',clustdist)
         clustdist=clustdist/len(clust)
-        #print(clustdist)
+        #sum cluster total 
         totclust+=clustdist 
-    
-    #print('all clust',totclust)
+    #average the total sum of distances for all clusters by number of clusters
     final=totclust/len(clusterlist)
-    #print('final',final)
+    #return the total cluster average
     return final
 
 def convert_sites_to_clust_idx(clust,active_sites):
     #convert sites to 1/2 to assign clusters
     idx=[]
     for num in active_sites:
-        if num in clust[0]:
-            idx.append(1)
-        if num in clust[1]:
-            idx.append(2)
-
+        for i in range(len(clust)):
+            if num in clust[i]:
+                idx.append(i+1)
+            
     return idx
 
 def guarentee_site_order(cluster):
     pair={}
     originalidx=0
+    #sort clusters by lowest hydrophobicity index to guarentee they are ordert the same between groups
     for item in cluster:
         tot=0
         for element in item:
@@ -280,9 +263,6 @@ def compare_clusters(clusterA,clusterB,active_sites):
     #print('clustb',CidxB)
 
     #Compare each cluster to determine False/True Negatives/Positives
-    #for i,j in zip(CidxA,CidxB):
-    #    print(i,j)
-    
     ##Implement Rand Index to compare two clusters
     TP=0
     TN=0
@@ -305,5 +285,5 @@ def compare_clusters(clusterA,clusterB,active_sites):
 
     RandIdx=(TP+TN)/(TP+FP+TN+FN)
 
-    print("RI",RandIdx)
+    #print("RI",RandIdx)
     return RandIdx
